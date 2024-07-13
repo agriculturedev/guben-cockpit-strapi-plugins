@@ -1,6 +1,6 @@
 import {BrandenburgEvents, RawEvent} from "./types/events";
 import {Event} from "./classes/Event";
-const { XMLParser, XMLBuilder, XMLValidator} = require("fast-xml-parser");
+const { XMLParser } = require("fast-xml-parser");
 
 
 export class Importer {
@@ -52,6 +52,10 @@ export class Importer {
             terminId: event.meetingId,
             title: event.title.DE,
             description: event.description.DE,
+            coords: {
+              lat: event.coords.lat,
+              lng: event.coords.lng
+            }
           }
         });
       } catch (e) {
@@ -64,6 +68,10 @@ export class Importer {
           data: {
             title: event.title.DE,
             description: event.description.DE,
+            coords: {
+              lat: event.coords.lat,
+              lng: event.coords.lng
+            }
           }
         });
       } catch (e) {

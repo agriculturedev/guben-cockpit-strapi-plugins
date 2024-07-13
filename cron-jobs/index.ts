@@ -9,10 +9,10 @@ export default {
     task: ({ strapi }) => {
 
       // Add your own logic here (e.g. send a queue of email, create a database backup, etc.).
-      const importer = new Importer(strapi);
+      new Importer(strapi);
     },
     options: {
-      rule: "1 * * * * *",
+      rule: "* 1 * * * *",
     },
   },
 };

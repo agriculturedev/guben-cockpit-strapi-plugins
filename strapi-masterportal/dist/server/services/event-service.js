@@ -5,7 +5,7 @@ exports.default = ({ strapi }) => ({
         const data = await strapi.entityService.findMany('api::event.event');
         return {
             "type": "FeatureCollection",
-            features: data.map((event, index) => ({
+            features: data.map((event) => ({
                 "type": "Feature",
                 "geometry": {
                     "type": "Point",

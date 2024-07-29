@@ -107,8 +107,8 @@ export class Event implements ParsedEvent {
       EN: event.REGION_NAME_E,
       PL: event.REGION_NAME_PL
     };
-    this._von = new Date(`${event.E_DATUM_VON}T${event.E_ZEIT_VON}`);
-    this._bis = new Date(`${event.E_DATUM_BIS}T${event.E_ZEIT_BIS}`);
+    this._von = new Date(`${event.E_DATUM_VON}${event.E_ZEIT_VON !== '' ? 'T' + event.E_ZEIT_VON : ''}`);
+    this._bis = new Date(`${event.E_DATUM_BIS}${event.E_ZEIT_BIS !== '' ? 'T' + event.E_ZEIT_BIS : ''}`);
     this._coords = {
       lat: event.E_GEOKOORD_LAT,
       lng: event.E_GEOKOORD_LNG

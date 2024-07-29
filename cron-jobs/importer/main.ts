@@ -56,8 +56,9 @@ export class Importer {
               lat: event.coords.lat,
               lng: event.coords.lng
             },
-            startDate: event.von,
-            endDate: event.bis
+
+            startDate: !isNaN(event.von.getTime()) ? event.von.toISOString() : null,
+            endDate: !isNaN(event.bis.getTime()) ? event.bis.toISOString() : null
           }
         });
       } catch (e) {
@@ -74,8 +75,8 @@ export class Importer {
               lat: event.coords.lat,
               lng: event.coords.lng
             },
-            startDate: event.von,
-            endDate: event.bis
+            startDate: !isNaN(event.von.getTime()) ? event.von : null,
+            endDate: !isNaN(event.bis.getTime()) ? event.bis : null
           }
         });
       } catch (e) {

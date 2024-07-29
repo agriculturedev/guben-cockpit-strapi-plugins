@@ -12,7 +12,7 @@ export default {
       new Importer(strapi);
     },
     options: {
-      rule: "* 1 * * * *",
+      rule: "0 1 * * * *",
     },
   },
 };

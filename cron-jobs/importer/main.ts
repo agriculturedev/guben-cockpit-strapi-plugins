@@ -58,7 +58,8 @@ export class Importer {
             },
 
             startDate: !isNaN(event.von.getTime()) ? event.von.toISOString() : null,
-            endDate: !isNaN(event.bis.getTime()) ? event.bis.toISOString() : null
+            endDate: !isNaN(event.bis.getTime()) ? event.bis.toISOString() : null,
+            imageUrl: event.pictures[0]?.url,
           }
         });
       } catch (e) {
@@ -76,7 +77,8 @@ export class Importer {
               lng: event.coords.lng
             },
             startDate: !isNaN(event.von.getTime()) ? event.von : null,
-            endDate: !isNaN(event.bis.getTime()) ? event.bis : null
+            endDate: !isNaN(event.bis.getTime()) ? event.bis : null,
+            imageUrl: event.pictures[0]?.url,
           }
         });
       } catch (e) {

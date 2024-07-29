@@ -55,7 +55,9 @@ export class Importer {
             coords: {
               lat: event.coords.lat,
               lng: event.coords.lng
-            }
+            },
+            startDate: event.von,
+            endDate: event.bis
           }
         });
       } catch (e) {
@@ -71,7 +73,9 @@ export class Importer {
             coords: {
               lat: event.coords.lat,
               lng: event.coords.lng
-            }
+            },
+            startDate: event.von,
+            endDate: event.bis
           }
         });
       } catch (e) {

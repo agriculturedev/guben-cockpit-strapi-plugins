@@ -14,7 +14,7 @@ import HomePage from '../HomePage';
 const App = () => {
   return (
     <div>
-      <div>hello</div>
+      test
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Importer } from './importer/main';
+import { EventImporter } from './importer/main';
 export default {
   /**
    * Simple example.
@@ -9,7 +9,7 @@ export default {
     task: ({ strapi }) => {
 
       // Add your own logic here (e.g. send a queue of email, create a database backup, etc.).
-      new Importer(strapi);
+      new EventImporter(strapi);
     },
     options: {
       rule: "0 1 * * * *",

@@ -9,7 +9,7 @@ export class EventImporter {
   _parser = new XMLParser();
 
   constructor(strapi) {
-    console.log("Starting importer...");
+    console.log("Starting Event importer...");
     this._startTime = new Date();
     this._strapi = strapi;
     this.run();

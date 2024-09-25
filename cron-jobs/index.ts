@@ -1,4 +1,5 @@
 import { EventImporter } from './importer/main';
+import { ProjectImporter } from "./projectImporter/main";
 export default {
   /**
    * Simple example.
@@ -10,6 +11,7 @@ export default {
 
       // Add your own logic here (e.g. send a queue of email, create a database backup, etc.).
       new EventImporter(strapi);
+      new ProjectImporter(strapi);
     },
     options: {
       rule: "0 1 * * * *",

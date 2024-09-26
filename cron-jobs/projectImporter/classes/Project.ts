@@ -1,7 +1,6 @@
-import {RawProject} from "../types/RawProject";
+import { RawProject } from "../types/RawProject";
 
 export class Project {
-
   id: string;
   catid: string;
   title: string;
@@ -20,6 +19,7 @@ export class Project {
     this.catid = project.catid;
     this.title = project.title;
     this.alias = project.alias;
+    this.introtext = project.introtext;
     this.fulltext = project.fulltext;
     this.created = new Date(project.created);
     this.publish_up = new Date(project.publish_up);

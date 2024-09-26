@@ -1,5 +1,5 @@
-import { EventImporter } from "./importer/main";
-import {ProjectImporter} from "./projectImporter/main";
+import { EventImporter } from './importer/main';
+import { ProjectImporter } from "./projectImporter/main";
 export default {
   /**
    * Simple example.

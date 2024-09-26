@@ -112,5 +112,4 @@ export class EventImporter {
       console.error(e);
     }
   }
-
 }

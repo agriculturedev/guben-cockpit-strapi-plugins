@@ -1,0 +1,69 @@
+import { RawProject } from "./types/RawProject";
+import { Project } from "./classes/Project";
+
+export class ProjectImporter {
+  _strapi: any;
+  _startTime = null;
+  _endTime = null;
+
+  constructor(strapi) {
+    console.log("Starting project importer...");
+    this._startTime = new Date();
+    this._strapi = strapi;
+    this.run();
+  }
+
+  get strapi() {
+    return this._strapi;
+  }
+
+  async run() {
+    const headers = { 'Authorization': 'Bearer e4aeacde8b1c4bfc2eb6bc4f81663c4c' };
+    const response = await fetch("https://www.guben.de/index.php?option=com_api&app=guben&resource=articles", {
+      method: "GET",
+      headers: headers
+    });
+
+    const data = await response.json();
+
+    if (data["err_msg"] != "") {
+      console.log(data["err_msg"]);
+    }
+
+    const projects = data["data"];
+    projects.forEach((project: RawProject) => {
+      this.saveProject(new Project(project));
+    });
+
+  }
+
+  async saveProject(project: Project) {
+    const projectExists = await this.strapi.db.query('api::project.project').findOne({
+      where: {
+        projectId: project.id
+      }
+    });
+
+    const projectData = {
+      projectId: project.id,
+      title: project.title,
+      description: project.introtext,
+      fullText: project.fulltext,
+      imageUrl: project.image_url,
+      imageCaption: project.image_caption,
+      imageCredits: project.image_credits
+    };
+
+    try {
+      if (!projectExists) {
+        await this.strapi.entityService.create('api::project.project', { data: projectData });
+      } else {
+        await this.strapi.entityService.update('api::project.project', projectExists.id, { data: projectData });
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+}

@@ -39,12 +39,12 @@ export class ProjectImporter {
   async saveProject(project: Project) {
     const projectExists = await this.strapi.db.query('api::project.project').findOne({
       where: {
-        projectId: project.id
+        projectId: project.id.toString()
       }
     });
 
     const projectData = {
-      projectId: project.id,
+      projectId: project.id.toString(),
       title: project.title,
       description: project.introtext,
       fullText: project.fulltext,
@@ -52,6 +52,7 @@ export class ProjectImporter {
       imageCaption: project.image_caption,
       imageCredits: project.image_credits
     };
+    // console.log(projectData);
 
     try {
       if (!projectExists) {

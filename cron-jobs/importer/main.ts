@@ -1,16 +1,15 @@
-import {BrandenburgEvents, RawEvent} from "./types/events";
-import {Event} from "./classes/Event";
+import { BrandenburgEvents, RawEvent } from "./types/events";
+import { Event } from "./classes/Event";
 const { XMLParser } = require("fast-xml-parser");
 
-
-export class Importer {
+export class EventImporter {
   _strapi: any;
   _startTime = null;
   _endTime = null;
   _parser = new XMLParser();
 
   constructor(strapi) {
-    console.log("Starting importer...");
+    console.log("Starting Event importer...");
     this._startTime = new Date();
     this._strapi = strapi;
     this.run();
@@ -33,6 +32,38 @@ export class Importer {
     console.log(`Import finished in ${this._endTime - this._startTime}ms`);
   }
 
+  async getCategoryIds (event: Event) {
+    const categoriesIds: string[] = [];
+    // create an array of ids with the ids of the categories that exist. else create them
+    event.categories.forEach(async (eventCategory) => {
+      let categoryExists = await this.strapi.db.query('api::category.category').findOne({
+        where: {
+          Name: eventCategory.name.DE
+        }
+      })
+
+      if (!categoryExists) {
+        if (eventCategory.name.DE !== "" && eventCategory.name.DE) {
+          categoryExists = await this.strapi.entityService.create('api::category.category', { data: {
+              Name: eventCategory.name.DE
+            }});
+        }
+      }
+
+      if (categoryExists) {
+        categoriesIds.push(categoryExists.Name);
+      }
+    })
+
+    await this.strapi.db.query('api::event.event').findOne({
+      where: {
+        E_ID: event.id,
+        eventId: event.eventId,
+        terminId: event.meetingId
+      }
+    });
+  }
+
   async saveEvent(data: RawEvent) {
     const event = new Event(data);
     const eventExists = await this.strapi.db.query('api::event.event').findOne({
@@ -43,47 +74,43 @@ export class Importer {
       }
     });
 
-    if (!eventExists) {
-      try {
-        await this.strapi.entityService.create('api::event.event', {
-          data: {
-            E_ID: event.id,
-            eventId: event.eventId,
-            terminId: event.meetingId,
-            title: event.title.DE,
-            description: event.description.DE,
-            coords: {
-              lat: event.coords.lat,
-              lng: event.coords.lng
-            },
+    const eventData = {
+      E_ID: event.id,
+      eventId: event.eventId,
+      terminId: event.meetingId,
+      title: event.title.DE,
+      description: event.description.DE,
+      coords: {
+        lat: event.coords.lat,
+        lng: event.coords.lng
+      },
+      startDate: !isNaN(event.von.getTime()) ? event.von.toISOString() : null,
+      endDate: !isNaN(event.bis.getTime()) ? event.bis.toISOString() : null,
+      imageUrl: event.pictures[0]?.url,
+      urls: event.urls.map(u => {
+        return { link: u.link, description: u.description.DE }
+      }),
+      // categories: event.categories.map(c => {
+      //   return { id: c.id, newId: c.newId, name: c.name.DE }
+      // })
+    };
 
-            startDate: !isNaN(event.von.getTime()) ? event.von.toISOString() : null,
-            endDate: !isNaN(event.bis.getTime()) ? event.bis.toISOString() : null,
-            imageUrl: event.pictures[0]?.url,
-          }
-        });
-      } catch (e) {
-        console.error(e);
+
+
+    try {
+      let savedEvent;
+
+      if (!eventExists) {
+        const categoriesIds = await this.getCategoryIds(event);
+        savedEvent = await this.strapi.entityService.create('api::event.event', { data: {...eventData, categories: { connect: categoriesIds} }});
+      } else {
+        const categoriesIds = await this.getCategoryIds(event);
+        savedEvent = await this.strapi.entityService.update('api::event.event', eventExists.id, { data: {...eventData, categories: { connect: categoriesIds} }});
       }
 
-    } else {
-      try {
-        await this.strapi.entityService.update('api::event.event', eventExists.id, {
-          data: {
-            title: event.title.DE,
-            description: event.description.DE,
-            coords: {
-              lat: event.coords.lat,
-              lng: event.coords.lng
-            },
-            startDate: !isNaN(event.von.getTime()) ? event.von : null,
-            endDate: !isNaN(event.bis.getTime()) ? event.bis : null,
-            imageUrl: event.pictures[0]?.url,
-          }
-        });
-      } catch (e) {
-        console.error(e);
-      }
+    } catch (e) {
+      console.error(e);
     }
   }
+
 }

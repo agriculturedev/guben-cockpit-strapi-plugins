@@ -2,7 +2,7 @@
 
 # Define the array of directories
 directories=(
-    "remote-gateway"
+    "strapi-masterportal"
 )
 
 # Loop through each directory

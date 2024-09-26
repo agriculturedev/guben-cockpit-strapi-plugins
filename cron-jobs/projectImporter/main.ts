@@ -34,7 +34,6 @@ export class ProjectImporter {
     projects.forEach((project: RawProject) => {
       this.saveProject(new Project(project));
     });
-
   }
 
   async saveProject(project: Project) {

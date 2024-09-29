@@ -1,5 +1,6 @@
 import { BrandenburgEvents, RawEvent } from "./types/events";
 import { Event } from "./classes/Event";
+import { ca } from 'date-fns/locale';
 const { XMLParser } = require("fast-xml-parser");
 
 export class EventImporter {
@@ -33,35 +34,34 @@ export class EventImporter {
   }
 
   async getCategoryIds (event: Event) {
-    const categoriesIds: string[] = [];
+    let categoriesIds = [];
     // create an array of ids with the ids of the categories that exist. else create them
-    event.categories.forEach(async (eventCategory) => {
-      let categoryExists = await this.strapi.db.query('api::category.category').findOne({
-        where: {
-          Name: eventCategory.name.DE
-        }
-      })
 
-      if (!categoryExists) {
-        if (eventCategory.name.DE !== "" && eventCategory.name.DE) {
-          categoryExists = await this.strapi.entityService.create('api::category.category', { data: {
+    for (const eventCategory of event.categories) {
+      if (eventCategory.name.DE) {
+        let categoryExists = await this.strapi.db.query('api::category.category').findOne({
+          where: {
+            Name: eventCategory.name.DE
+          }
+        });
+
+        if (categoryExists === null) {
+          await this.strapi.entityService.create('api::category.category', { data: {
               Name: eventCategory.name.DE
             }});
+          categoryExists = await this.strapi.db.query('api::category.category').findOne({
+            where: {
+              Name: eventCategory.name.DE
+            }
+          });
+        }
+
+        if (categoryExists) {
+          categoriesIds.push(categoryExists.id);
         }
       }
-
-      if (categoryExists) {
-        categoriesIds.push(categoryExists.Name);
-      }
-    })
-
-    await this.strapi.db.query('api::event.event').findOne({
-      where: {
-        E_ID: event.id,
-        eventId: event.eventId,
-        terminId: event.meetingId
-      }
-    });
+    }
+    return categoriesIds;
   }
 
   async saveEvent(data: RawEvent) {
@@ -102,10 +102,10 @@ export class EventImporter {
 
       if (!eventExists) {
         const categoriesIds = await this.getCategoryIds(event);
-        savedEvent = await this.strapi.entityService.create('api::event.event', { data: {...eventData, categories: { connect: categoriesIds} }});
+        savedEvent = await this.strapi.entityService.create('api::event.event', { data: {...eventData, categories: categoriesIds }});
       } else {
         const categoriesIds = await this.getCategoryIds(event);
-        savedEvent = await this.strapi.entityService.update('api::event.event', eventExists.id, { data: {...eventData, categories: { connect: categoriesIds} }});
+        savedEvent = await this.strapi.entityService.update('api::event.event', eventExists.id, { data: {...eventData, categories: categoriesIds }});
       }
 
     } catch (e) {

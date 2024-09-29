@@ -14,7 +14,7 @@ export default {
       new ProjectImporter(strapi);
     },
     options: {
-      rule: "1 * * * * *",
+      rule: "0 * * * * *",
     },
   },
 };

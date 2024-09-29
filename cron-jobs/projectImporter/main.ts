@@ -31,9 +31,14 @@ export class ProjectImporter {
     }
 
     const projects = data["data"];
-    projects.forEach((project: RawProject) => {
-      this.saveProject(new Project(project));
-    });
+    try {
+      projects.forEach((project: RawProject) => {
+        this.saveProject(new Project(project));
+      });
+    } catch (e) {
+      console.error("Error while saving projects", e);
+    }
+
   }
 
   async saveProject(project: Project) {

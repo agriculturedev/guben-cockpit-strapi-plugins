@@ -90,6 +90,7 @@ export class EventImporter {
       urls: event.urls.map(u => {
         return { link: u.link, description: u.description.DE }
       }),
+      locationCity: event.location.city
       // categories: event.categories.map(c => {
       //   return { id: c.id, newId: c.newId, name: c.name.DE }
       // })

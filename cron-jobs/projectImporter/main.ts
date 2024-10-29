@@ -18,7 +18,8 @@ export class ProjectImporter {
   }
 
   async run() {
-    const headers = { 'Authorization': 'Bearer e4aeacde8b1c4bfc2eb6bc4f81663c4c' };
+    // @ts-ignore
+    const headers = { 'Authorization': `Bearer ${process.env.GUBEN_ARTICLES_BEARER_TOKEN}` }; // not sure if this is correct, because importer is disabled from now on
     const response = await fetch("https://www.guben.de/index.php?option=com_api&app=guben&resource=articles", {
       method: "GET",
       headers: headers
